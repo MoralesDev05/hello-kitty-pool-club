@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Hello Kitty Pool Club</title><link rel="stylesheet" href="styles/main.css"></head>
+<body><div id="toast"></div>
+<section id="home" class="screen on">
+  <h1 class="logo">🎀 Hello Kitty<br>Pool Club</h1>
+  <div id="crew"></div>
+  <div id="prof" class="card"></div>
+  <button id="bOnline">Jogar online</button>
+  <div class="row"><button id="bBot">Jogar contra bot</button>
+    <select id="diff"><option value="easy">Fácil</option><option value="medium" selected>Médio</option><option value="hard">Difícil</option></select></div>
+  <button id="bFriend">Jogar com amigo</button>
+  <button id="bCustom">Personalizar</button>
+  <button id="bSet">Configurações</button>
+  <small id="conn">⚪ Conectando...</small>
+</section>
+<section id="friend" class="screen"><h2>Jogar com amigo</h2>
+  <button id="bCreate">Criar sala privada</button>
+  <div class="row"><input id="code" maxlength="5" placeholder="CÓDIGO" autocapitalize="characters"><button id="bJoin">Entrar</button></div>
+  <button class="back">Voltar</button></section>
+<section id="lobby" class="screen"><h2 id="lt"></h2><div id="lcode"></div>
+  <div class="row" id="lshare"><button id="cCode">Copiar código</button><button id="cLink">Copiar link</button></div>
+  <ul id="lp"></ul><button id="bReady">Estou pronto(a)!</button><button id="bLeave">Sair</button></section>
+<section id="custom" class="screen"><h2>Personalizar</h2><input id="nm" maxlength="16" placeholder="Seu nome">
+  <p>Avatar</p><div id="avs" class="grid"></div><p>Mesa</p><div id="ths" class="grid"></div>
+  <button class="back">Salvar e voltar</button></section>
+<section id="settings" class="screen"><h2>Configurações</h2>
+  <label><input type="checkbox" id="gd"> Mostrar linha de mira</label>
+  <button id="rst">Zerar estatísticas</button><button class="back">Voltar</button></section>
+<section id="game" class="screen">
+  <header><div id="p0" class="pl"></div><div id="p1" class="pl"></div></header>
+  <div id="stage"><canvas id="cv"></canvas><div id="fine" title="Ajuste fino da mira"></div><div id="msg"></div></div>
+  <div id="tn"></div>
+  <footer><button id="exit">Sair</button><input type="range" id="pow" min="5" max="100" value="60"><button id="fire">Tacar</button><button id="cancel" title="Cancelar mira">✖</button><span id="gc"></span></footer>
+  <div id="over"></div></section>
+<script src="/shared/physics.js"></script><script src="/shared/rules.js"></script><script src="/shared/bot.js"></script>
+<script src="/socket.io/socket.io.js"></script><script src="config.js"></script><script src="main.js"></script></body></html>

@@ -1,0 +1,19 @@
+{
+  "name": "hello-kitty-pool-club",
+  "version": "0.1.0",
+  "description": "Sinuca 8-ball 2D kawaii para navegador, com bots e multiplayer online",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
+  }
+}
