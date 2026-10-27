@@ -11,10 +11,15 @@
   <div class="row"><button id="bBot">Jogar contra bot</button>
     <select id="diff"><option value="easy">Fácil</option><option value="medium" selected>Médio</option><option value="hard">Difícil</option></select></div>
   <button id="bFriend">Jogar com amigo</button>
+  <button id="bRank">🏆 Ranking</button>
   <button id="bCustom">Personalizar</button>
   <button id="bSet">Configurações</button>
   <small id="conn">⚪ Conectando...</small>
 </section>
+<section id="ranking" class="screen"><h2>🏆 Ranking online</h2>
+  <small>Partidas online e com amigos. Contra o bot é só treino e não conta.</small>
+  <div id="rkw"><ol id="rk"></ol></div>
+  <button id="bRankBack">Voltar</button></section>
 <section id="friend" class="screen"><h2>Jogar com amigo</h2>
   <button id="bCreate">Criar sala privada</button>
   <div class="row"><input id="code" maxlength="5" placeholder="CÓDIGO" autocapitalize="characters"><button id="bJoin">Entrar</button></div>
@@ -28,7 +33,7 @@
 <section id="settings" class="screen"><h2>Configurações</h2>
   <label><input type="checkbox" id="gd"> Mostrar linha de mira</label>
   <p>Cor da mira</p><div id="aimc" class="grid"></div>
-  <button id="rst">Zerar estatísticas</button><button class="back">Voltar</button></section>
+  <button id="rst">Zerar moedas</button><button class="back">Voltar</button></section>
 <section id="game" class="screen">
   <header><div id="p0" class="pl"></div><div id="p1" class="pl"></div></header>
   <div id="stage"><canvas id="cv"></canvas><div id="msg"></div></div>

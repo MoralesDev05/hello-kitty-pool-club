@@ -6,6 +6,7 @@ const prof = Object.assign({ name: 'Jogador', avatar: 0, theme: 0, guide: true, 
 const persist = () => localStorage.hkp = JSON.stringify(prof);
 const AIMC = [['Branco', '#ffffff'], ['Rosa', '#ff4f9a'], ['Ciano', '#29d9ff'], ['Verde', '#5cff7a'], ['Vermelho', '#ff3b3b'], ['Roxo', '#b06bff']];
 if (!AIMC.some(c => c[1] === prof.aimColor)) prof.aimColor = '#ffffff';
+if (!prof.rk) { prof.rk = 1; prof.w = prof.l = prof.xp = 0; } // V/D/nível agora são do servidor (só online); zera os valores antigos, que incluíam bots
 const renderAim = () => { $('#aimc').innerHTML = AIMC.map(([n, c]) => `<button class="sw ${c === prof.aimColor ? 'sel' : ''}" data-c="${c}" style="background:${c}" title="${n}" aria-label="${n}"></button>`).join(''); };
 const token = localStorage.hkpt || (localStorage.hkpt = Math.random().toString(36).slice(2) + Date.now().toString(36));
 const sock = io({ auth: { token } });
@@ -35,8 +36,25 @@ $('#bCustom').onclick = () => { renderCustom(); show('custom'); };
 $('#bSet').onclick = () => { $('#gd').checked = prof.guide; renderAim(); show('settings'); };
 $('#aimc').onclick = e => { const b = e.target.closest('button'); if (b) { prof.aimColor = b.dataset.c; persist(); renderAim(); } };
 $('#gd').onchange = e => { prof.guide = e.target.checked; persist(); };
-$('#rst').onclick = () => { Object.assign(prof, { w: 0, l: 0, coins: 0, xp: 0 }); persist(); renderProf(); toast('Estatísticas zeradas'); };
+$('#rst').onclick = () => { prof.coins = 0; persist(); renderProf(); toast('Moedas zeradas'); }; // V/D/nível ficam no ranking do servidor e não podem ser zerados daqui
 $('#bFriend').onclick = () => show('friend');
+// ---------- Ranking ----------
+const rkRow = r => `<li class="${r.me ? 'me' : ''}"><b class="pos">${['🥇', '🥈', '🥉'][r.pos - 1] || r.pos}</b><span class="who">${avi(r.avatar)} <span>${esc(r.name)}</span></span><span>Nv ${r.level}</span><span>${r.w}V</span><span>${r.l}D</span></li>`;
+const rkMsg = t => { $('#rk').innerHTML = `<li class="msg">${t}</li>`; };
+let rkT = null, rkLast = null;
+const renderRank = d => {
+  rkLast = d; clearTimeout(rkT);
+  if (!d.list.length) return rkMsg('Ninguém jogou online ainda. Seja o(a) primeiro(a)! 🎀');
+  $('#rk').innerHTML = '<li class="hd"><b class="pos">#</b><span class="who">Jogador</span><span>Nível</span><span>Vit.</span><span>Der.</span></li>' + d.list.map(rkRow).join('') + (d.you ? '<li class="gap">⋯</li>' + rkRow(d.you) : '');
+};
+$('#bRank').onclick = () => {
+  show('ranking'); if (rkLast) renderRank(rkLast); else rkMsg('Carregando...');
+  if (!sock.connected) return rkMsg('🔴 Sem conexão com o servidor');
+  sock.emit('ranking'); clearTimeout(rkT); rkT = setTimeout(() => sock.emit('ranking'), 500); // reenvia uma vez caso o servidor tenha limitado a 1ª chamada
+};
+$('#bRankBack').onclick = () => { clearTimeout(rkT); show('home'); };
+sock.on('ranking', renderRank);
+sock.on('stats', s => { if (s) { Object.assign(prof, { w: s.w, l: s.l, xp: s.xp }); persist(); renderProf(); } });
 $('#bOnline').onclick = () => act('quick');
 $('#bCreate').onclick = () => act('create');
 $('#bJoin').onclick = () => act('join', { code: $('#code').value });
@@ -125,8 +143,8 @@ function maybeBot() {
 const REASON = { 8: 'bola 8 encaçapada corretamente', early8: 'bola 8 encaçapada antes da hora', scratch8: 'bola branca caiu junto com a 8', abandono: 'o adversário abandonou', 'desconexão': 'o adversário desconectou' };
 function showOver() {
   const won = state.winner === sess.me;
-  if (!sess.counted) { sess.counted = 1; if (won) { prof.w++; prof.coins += 50; prof.xp += 30; } else { prof.l++; prof.coins += 15; prof.xp += 10; } persist(); renderProf(); }
-  $('#over').innerHTML = `<h2>${won ? '🎉 Você venceu! 🎉' : '😿 Você perdeu'}</h2><p>${esc(nm(state.winner))} ganhou: ${REASON[state.lastEvent.reason] || ''}</p>` + (sess.mode === 'bot' ? '<button id="again">Jogar de novo</button>' : '') + '<button id="toMenu">Menu</button>';
+  if (!sess.counted) { sess.counted = 1; if (sess.mode === 'online') { prof.coins += won ? 50 : 15; persist(); renderProf(); } } // V/D e XP vêm do servidor ('stats'); contra o bot nada é contabilizado
+  $('#over').innerHTML = `<h2>${won ? '🎉 Você venceu! 🎉' : '😿 Você perdeu'}</h2><p>${esc(nm(state.winner))} ganhou: ${REASON[state.lastEvent.reason] || ''}</p>` + (sess.mode === 'bot' ? '<small>Treino: não conta no ranking</small><button id="again">Jogar de novo</button>' : '') + '<button id="toMenu">Menu</button>';
   $('#over').className = 'on';
   $('#toMenu').onclick = exitGame; if ($('#again')) $('#again').onclick = () => { const s = sess; sess = { ...s, counted: 0 }; beginGame(Rules.newGame()); };
 }
@@ -183,8 +201,6 @@ function ball(x, y, id) {
   if (id > 8) { ctx.fillStyle = c; ctx.fillRect(-R, -R * 0.55, 2 * R, R * 1.1); }
   if (id) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, R * 0.46, 0, 7); ctx.fill(); ctx.fillStyle = '#222'; ctx.font = 'bold ' + Math.round(R * 0.7) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(id, 0, 0.5); }
   ctx.beginPath(); ctx.arc(-R * 0.3, -R * 0.3, R * 0.22, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fill(); ctx.restore();
-  if (id) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, 4.6, 0, 7); ctx.fill(); ctx.fillStyle = '#222'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(id, 0, 0.5); }
-  ctx.beginPath(); ctx.arc(-3, -3, 2.2, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fill(); ctx.restore();
 }
 function guide(c, o) { // o = { a: ângulo, pw: força 0-100, color, line: mostra linha de mira, grab, opp: é o adversário }
   ctx.save(); if (o.opp) ctx.globalAlpha = .75;

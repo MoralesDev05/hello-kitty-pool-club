@@ -34,5 +34,11 @@ Use um serviço com Node.js e WebSocket (Render, Railway, Fly.io, VPS). Build: `
 - Fluxo online: o cliente envia só a *intenção* (ângulo, força, posição da branca); o servidor valida turno/posição, simula e devolve os quadros + novo estado; ambos reproduzem a mesma animação.
 - `client/` interface (canvas 2D), mira com previsão, temas de mesa, perfil (nível, moedas, V/D em `localStorage`).
 
+## Ranking online
+Botão **🏆 Ranking** na tela inicial: top 50 por vitórias (desempate: menos derrotas), com nome, nível, vitórias e derrotas; o seu lugar aparece destacado (mesmo fora do top 50).
+- Só contam partidas **online** (Jogar online e Jogar com amigo). Contra o bot é treino: não conta V/D nem XP.
+- Nível = `floor(XP/100)+1`; vitória online = 30 XP, derrota = 10 XP. Tudo é calculado no servidor (`server/ranking.js`), que identifica o jogador pelo token do navegador (nunca enviado ao ranking).
+- Dados em `data/ranking.json` (mude com `RANKING_FILE`). Em hospedagens com disco efêmero (ex.: plano grátis do Render), use um disco/volume persistente, senão o ranking zera a cada deploy.
+
 ## Limitações da primeira versão
-Efeito (spin) na bola branca, Phaser/Matter.js (usei canvas 2D e física própria), arte oficial, ranking/histórico online e skins ainda não existem. Perfil e progressão são locais. Sem apostas com dinheiro real.
+Efeito (spin) na bola branca, Phaser/Matter.js (usei canvas 2D e física própria), arte oficial, histórico de partidas e skins ainda não existem. Moedas e personalização são locais. Sem apostas com dinheiro real.
