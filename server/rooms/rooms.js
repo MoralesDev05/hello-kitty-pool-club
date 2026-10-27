@@ -1,5 +1,5 @@
 // Salas, matchmaking, convites e partidas. O servidor é a autoridade: valida e simula cada tacada.
-const Rules = require('../../shared/rules.js');
+const Rules = require('../../shared/rules.js'), { C } = require('../../shared/physics.js');
 const RECONNECT_MS = +process.env.RECONNECT_MS || 45000;
 module.exports = function (io) {
   const rooms = new Map(), byToken = new Map();
@@ -60,6 +60,16 @@ module.exports = function (io) {
       if (out.state.phase === 'over') r.status = 'over';
       io.to(r.code).emit('shot', { by: idx, frames: out.frames, state: out.state });
       setTimeout(() => { r.busy = false; }, out.frames.length / 60 * 1000 + 300);
+    });
+    // mira ao vivo: só quem está na vez pode enviar; o servidor valida/limita os números e repassa ao adversário
+    sock.on('aim', d => {
+      const r = rooms.get(byToken.get(me.token)); if (!r || r.status !== 'playing' || r.busy || !d || typeof d !== 'object') return;
+      const idx = r.players.findIndex(p => p.token === me.token); if (idx < 0 || r.state.turn !== idx) return;
+      const now = Date.now(); if (now - (me.lastAim || 0) < 20) return; me.lastAim = now;
+      const n = (v, lo, hi) => Math.max(lo, Math.min(hi, +v || 0));
+      const out = { a: n(d.a, -1e4, 1e4), p: n(d.p, 0, 1), s: d.s ? 1 : 0, col: /^#[0-9a-f]{6}$/i.test(d.col) ? d.col : '#ffffff' };
+      if (d.cue && r.state.inHand) out.cue = { x: n(d.cue.x, 0, C.W), y: n(d.cue.y, 0, C.H) };
+      sock.to(r.code).emit('aim', out);
     });
     sock.on('leave', () => leave(me.token));
     sock.on('disconnect', () => {
