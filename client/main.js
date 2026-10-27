@@ -183,6 +183,8 @@ function ball(x, y, id) {
   if (id > 8) { ctx.fillStyle = c; ctx.fillRect(-R, -R * 0.55, 2 * R, R * 1.1); }
   if (id) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, R * 0.46, 0, 7); ctx.fill(); ctx.fillStyle = '#222'; ctx.font = 'bold ' + Math.round(R * 0.7) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(id, 0, 0.5); }
   ctx.beginPath(); ctx.arc(-R * 0.3, -R * 0.3, R * 0.22, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fill(); ctx.restore();
+  if (id) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, 4.6, 0, 7); ctx.fill(); ctx.fillStyle = '#222'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(id, 0, 0.5); }
+  ctx.beginPath(); ctx.arc(-3, -3, 2.2, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fill(); ctx.restore();
 }
 function guide(c, o) { // o = { a: ângulo, pw: força 0-100, color, line: mostra linha de mira, grab, opp: é o adversário }
   ctx.save(); if (o.opp) ctx.globalAlpha = .75;
