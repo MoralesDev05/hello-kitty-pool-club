@@ -42,6 +42,7 @@ Botão **🏆 Ranking** na tela inicial: top 50 por vitórias (desempate: menos 
 - Só contam partidas **online** (Jogar online e Jogar com amigo). Contra o bot é treino: não conta V/D nem XP.
 - Nível = `floor(XP/100)+1`; vitória online = 30 XP, derrota = 10 XP. Tudo é calculado no servidor (`server/ranking.js`), que identifica o jogador pelo token do navegador (nunca enviado ao ranking).
 - **Persistência no Render (plano free):** o disco é apagado quando o servidor desliga, então o ranking fica no **Upstash Redis** (grátis). Configure as variáveis `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` (veja abaixo). Sem elas, usa o arquivo local `data/ranking.json` (só para desenvolvimento). Se o banco estiver configurado mas fora do ar na inicialização, o servidor não sobe (evita começar vazio e sobrescrever o ranking).
+- Dados em `data/ranking.json` (mude com `RANKING_FILE`). Em hospedagens com disco efêmero (ex.: plano grátis do Render), use um disco/volume persistente, senão o ranking zera a cada deploy.
 
 ## Limitações da primeira versão
 Efeito (spin) na bola branca, Phaser/Matter.js (usei canvas 2D e física própria), arte oficial, histórico de partidas e skins ainda não existem. Moedas e personalização são locais. Sem apostas com dinheiro real.
