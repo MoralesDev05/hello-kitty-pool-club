@@ -26,6 +26,9 @@ Use um serviço com Node.js e WebSocket (Render, Railway, Fly.io, VPS). Build: `
 |---|---|---|
 | `PORT` | 3000 | Porta HTTP/WebSocket (provedores definem sozinhos) |
 | `CORS_ORIGIN` | desativado | Só se o frontend ficar em outro domínio |
+| `UPSTASH_REDIS_REST_URL` | — | URL REST do banco Upstash (ranking permanente) |
+| `UPSTASH_REDIS_REST_TOKEN` | — | Token REST do banco Upstash |
+| `RANKING_FILE` | data/ranking.json | Arquivo do ranking quando o Upstash não está configurado |
 | `RECONNECT_MS` | 45000 | Tempo para reconectar antes de perder por desconexão |
 
 ## Arquitetura
@@ -34,5 +37,11 @@ Use um serviço com Node.js e WebSocket (Render, Railway, Fly.io, VPS). Build: `
 - Fluxo online: o cliente envia só a *intenção* (ângulo, força, posição da branca); o servidor valida turno/posição, simula e devolve os quadros + novo estado; ambos reproduzem a mesma animação.
 - `client/` interface (canvas 2D), mira com previsão, temas de mesa, perfil (nível, moedas, V/D em `localStorage`).
 
+## Ranking online
+Botão **🏆 Ranking** na tela inicial: top 50 por vitórias (desempate: menos derrotas), com nome, nível, vitórias e derrotas; o seu lugar aparece destacado (mesmo fora do top 50).
+- Só contam partidas **online** (Jogar online e Jogar com amigo). Contra o bot é treino: não conta V/D nem XP.
+- Nível = `floor(XP/100)+1`; vitória online = 30 XP, derrota = 10 XP. Tudo é calculado no servidor (`server/ranking.js`), que identifica o jogador pelo token do navegador (nunca enviado ao ranking).
+- **Persistência no Render (plano free):** o disco é apagado quando o servidor desliga, então o ranking fica no **Upstash Redis** (grátis). Configure as variáveis `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` (veja abaixo). Sem elas, usa o arquivo local `data/ranking.json` (só para desenvolvimento). Se o banco estiver configurado mas fora do ar na inicialização, o servidor não sobe (evita começar vazio e sobrescrever o ranking).
+
 ## Limitações da primeira versão
-Efeito (spin) na bola branca, Phaser/Matter.js (usei canvas 2D e física própria), arte oficial, ranking/histórico online e skins ainda não existem. Perfil e progressão são locais. Sem apostas com dinheiro real.
+Efeito (spin) na bola branca, Phaser/Matter.js (usei canvas 2D e física própria), arte oficial, histórico de partidas e skins ainda não existem. Moedas e personalização são locais. Sem apostas com dinheiro real.

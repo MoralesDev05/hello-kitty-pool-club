@@ -3,6 +3,14 @@ html,body{margin:0;height:100%;height:100dvh;font-family:'Trebuchet MS',system-u
 .screen{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;overflow:auto}
 .screen.on{display:flex}
 .logo{font-size:clamp(28px,7vw,48px);text-align:center;margin:0 0 6px;color:#e5486e;text-shadow:2px 2px 0 #fff}
+#rkw{width:100%;max-width:460px;flex:1 1 auto;min-height:0;overflow:auto;background:#fff9;border-radius:18px;padding:6px}
+#rk{list-style:none;margin:0;padding:0;font-size:14px;font-weight:bold}
+#rk li{display:grid;grid-template-columns:34px 1fr 54px 40px 40px;align-items:center;gap:4px;padding:5px 8px;border-radius:12px}
+#rk li:nth-child(even){background:#ffffff80}#rk li.me{background:#ffd0e1;outline:2px solid #e5486e}
+#rk .hd{font-size:11px;opacity:.65;text-transform:uppercase}#rk .pos{text-align:center}
+#rk .who{display:flex;align-items:center;gap:6px;min-width:0}#rk .who span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#rk .who .avi{height:30px;width:30px;border-radius:50%;background:#fff;border:2px solid #ff8fb8;padding:1px;flex:none}
+#rk .gap{display:block;text-align:center;opacity:.5;padding:0}#rk .msg{display:block;text-align:center;padding:18px 8px}
+#ranking small{text-align:center;max-width:460px}
 button,select,input[type=text],input:not([type]){font:inherit;border-radius:22px;border:3px solid #fff;padding:10px 20px;background:#ff8fb8;color:#fff;font-weight:bold;box-shadow:0 3px 0 #e5486e;cursor:pointer;min-width:200px}
 button:active{transform:translateY(2px);box-shadow:none}
 select,input:not([type]){background:#fff;color:#b8335f;min-width:120px;text-align:center;box-shadow:0 3px 0 #f2b6cc}
@@ -42,3 +50,4 @@ footer{flex:none;display:flex;gap:8px;align-items:center;padding:8px;width:100%;
 .pl{overflow:hidden;min-width:0}.pl b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #game #tn{height:2.5em;min-height:2.5em;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
 @media (max-width:600px){header{height:80px}.pl{justify-content:center}#game #tn{height:28px;min-height:28px}}
+.grid .sw{min-width:0;width:38px;height:38px;padding:0;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 0 rgba(0,0,0,.25)}.grid .sw.sel{outline:3px solid #e5486e;outline-offset:2px}
